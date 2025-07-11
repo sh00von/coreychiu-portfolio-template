@@ -13,10 +13,24 @@ export type EducationItemType = {
   
   export const educationList: Array<EducationItemType> = [
     {
-      school: 'Southern University of Science and Technology',
-      major: 'Computer Science and Technology',
+      school: 'Chittagong University of Engineering & Technology (CUET)',
+      major: 'B.Sc. Engineering in Water Resources Engineering',
       logo: 'college',
-      start: '2016',
-      end: '2020'
+      start: '2023',
+      end: 'Present'
     },
+    {
+      school: 'Chittagong College',
+      major: 'Higher Secondary Certificate',
+      logo: 'college',
+      start: '2019',
+      end: '2021'
+    },
+    {
+      school: 'Chittagong Cantonment Public School & College',
+      major: 'Secondary School Certificate',
+      logo: 'school',
+      start: '2007',
+      end: '2019'
+    }
   ]

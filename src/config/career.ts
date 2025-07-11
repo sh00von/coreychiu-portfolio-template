@@ -13,10 +13,24 @@ export type CareerItemType = {
   
   export const careerList: Array<CareerItemType> = [
     {
-      company: 'Somewhere Financial Inc.',
-      title: 'Software Engineer',
-      logo: 'bank',
-      start: '2020',
+      company: 'CUET Cyber Security Club',
+      title: 'President',
+      logo: 'cyber',
+      start: '2025',
       end: 'Present'
     },
+    {
+      company: 'Nogorful',
+      title: 'IT Director',
+      logo: 'it',
+      start: '2024',
+      end: 'Present'
+    },
+    {
+      company: 'ONGKO',
+      title: 'Founder & Former President',
+      logo: 'ngo',
+      start: '2019',
+      end: '2020'
+    }
   ]

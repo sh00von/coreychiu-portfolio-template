@@ -11,9 +11,4 @@ export type FriendItemType = {
   logo?: string
 }
 
-export const friends: Array<FriendItemType> = [
-  {
-    name: 'Corey Chiu',
-    link: { href: 'https://coreychiu.com' },
-  },
-]
+export const friends: Array<FriendItemType> = []

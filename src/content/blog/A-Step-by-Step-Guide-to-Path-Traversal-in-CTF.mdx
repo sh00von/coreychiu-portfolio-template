@@ -1,0 +1,154 @@
+---
+title: 'Dissecting How SQL Injection Really Works'
+description: 'Master path traversal in CTF challenges. Learn how attackers exploit directory navigation flaws, bypass filters, and compromise systems step-by-step.'
+date: '2025-06-11'
+---
+Imagine you're trying to retrieve a book from a library. You tell the librarian, "Get me the book 'Introduction to Cyber Security' from the 'Tech' section." Simple, right? Now, what if you could manipulate that request to say, "Get me the book '../../../../etc/passwd'?" That's the essence of path traversal, also known as directory traversal, a deceptively simple yet incredibly powerful vulnerability often encountered in Capture The Flag (CTF) challenges.
+
+It's like having a secret backdoor into a server's file system, allowing you to read files that were never intended for public consumption. For CTF players, spotting and exploiting path traversal can often be the key to finding flags, uncovering hidden configurations, or even achieving remote code execution.
+
+Let's break down this common web vulnerability, understand how it works, and walk through the steps to exploit it in a CTF scenario.
+
+## The Core Concept: Understanding `../`
+
+At its heart, path traversal relies on exploiting the way web applications handle file paths. Most operating systems use `../` (dot-dot-slash) to represent "go up one directory level." Think of it as hitting the "back" button on your file explorer, but within the server's directory structure.
+
+When a web application takes user input to construct a file path – say, to display an image, load a template, or include a script – and doesn't properly validate or sanitize that input, an attacker can inject `../` sequences. If successful, this allows them to "climb" out of the intended directory and access files elsewhere on the server.
+
+Consider a simple URL: `https://example.com/view_image.php?file=cat.jpg`
+
+The application might be taking `cat.jpg` and building a path like `/var/www/html/images/cat.jpg`. If you change the `file` parameter to `../../../../etc/passwd`, the application might then try to access `/var/www/html/images/../../../../etc/passwd`. If you trace that path, it resolves to `/etc/passwd`, a standard Linux file containing user account information. Bingo!
+
+## Spotting the Vulnerability: Where to Look
+
+Path traversal often hides in plain sight. Here are common places to investigate during a CTF:
+
+*   **File Inclusion Parameters:** Any URL parameter that seems to load a file, such as `file=`, `page=`, `template=`, `include=`, `path=`, `document=`, `view=`.
+*   **Image/Asset Loaders:** Applications that display user-submitted images or dynamically load CSS/JS files.
+*   **Download Functionality:** Features that allow users to download specific files.
+*   **Log Viewers:** Applications that display log files based on user input.
+
+Your first instinct should be to try injecting `../` into any parameter that looks like it's pointing to a file.
+
+## Step-by-Step Exploitation: A Practical Approach
+
+Let's assume we've identified a potential target: `https://ctf.example.com/read?filename=report.txt`.
+
+### Step 1: The Initial Probe
+
+Your very first attempt should be the most straightforward. Try to access a well-known system file. `/etc/passwd` is the classic choice on Linux systems because it's usually world-readable and contains easily identifiable information (like usernames).
+
+```
+https://ctf.example.com/read?filename=../../../../etc/passwd
+```
+
+You might need to adjust the number of `../` sequences. Start with a few and increase until you either get an error indicating you've gone too far (e.g., "No such file or directory") or you successfully retrieve the file. On Linux, `/etc/passwd` is usually at the root of the filesystem, so you'll need enough `../` to get past the web application's root directory.
+
+### Step 2: Bypassing Common Filters
+
+Sometimes, the application isn't quite so naive. Developers often implement filters to block obvious traversal attempts. This is where the CTF fun truly begins!
+
+#### a. URL Encoding
+
+The application might filter out `../` literally. Try URL encoding the dots and slashes:
+
+*   `.` becomes `%2e`
+*   `/` becomes `%2f`
+
+So, `../` becomes `%2e%2e%2f`.
+
+```
+https://ctf.example.com/read?filename=%2e%2e%2f%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd
+```
+
+#### b. Double URL Encoding
+
+What if the application decodes the URL *twice*? This is less common but can happen.
+
+`%2e%2e%2f` encoded again becomes `%252e%252e%252f`.
+
+```
+https://ctf.example.com/read?filename=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fetc%252fpasswd
+```
+
+#### c. Null Byte Bypass (`%00`)
+
+Some older or poorly configured applications stop processing a string when they encounter a null byte (`%00`). If the application appends a file extension (e.g., `.txt`, `.php`) to your input, a null byte can truncate the string before the extension is added, effectively bypassing it.
+
+If the application turns `filename=report` into `report.txt`, then:
+
+```
+https://ctf.example.com/read?filename=../../../../etc/passwd%00
+```
+
+This might resolve to `../../../../etc/passwd` because the `.txt` part is ignored.
+
+#### d. Directory Enumeration / Trailing Slashes
+
+Sometimes, filters check for `../` but miss variations.
+
+*   **`....//` (Dot-dot-slash-slash):** Some filters might only check for `../` but miss `....//`, which on some systems resolves to `../`.
+*   **Trailing Slashes:** Appending a slash at the end: `../../../../etc/passwd/` (though this usually only works for directories, not files).
+
+#### e. Absolute Path Injection
+
+If the application is appending your input to an absolute path but doesn't sanitize the beginning of your input, you might be able to start with a root slash `/`.
+
+For example, if the application builds `/var/www/html/files/` + `user_input`, and you provide `/etc/passwd`, it might try to access `/var/www/html/files//etc/passwd`, which on Linux usually resolves correctly to `/etc/passwd`.
+
+```
+https://ctf.example.com/read?filename=/etc/passwd
+```
+
+This bypass is less about traversal and more about direct path injection, but it's a useful technique to try if `../` fails.
+
+### Step 3: What Files to Target?
+
+Once you've established a working path traversal, the goal is to find the flag. Here are common files to look for in CTF challenges:
+
+*   **Linux System Files:**
+    *   `/etc/passwd`: User accounts (often visible).
+    *   `/etc/shadow`: Hashed passwords (requires root to read, but worth a try).
+    *   `/etc/hostname`: Server hostname.
+    *   `/etc/issue`: OS version information.
+    *   `/proc/self/cmdline`: Command line arguments of the current process.
+    *   `/proc/self/environ`: Environment variables of the current process (can contain secrets).
+    *   `/var/log/apache2/access.log` or `error.log`: Apache logs (useful for LFI to RCE).
+    *   `/var/log/nginx/access.log` or `error.log`: Nginx logs.
+*   **Web Application Files:**
+    *   `index.php`, `app.py`, `config.js`, `settings.php`: Source code of the application itself. Look for `../` in the URL or try common filenames.
+    *   `/.env`: Environment configuration files.
+    *   `composer.json`, `package.json`, `requirements.txt`: Dependency files that might reveal technologies or even credentials.
+    *   `web.config` (IIS): Web server configuration.
+    *   `database.sqlite`, `db.sqlite3`: Database files.
+*   **CTF-Specific Locations:**
+    *   `/flag.txt`, `/var/www/html/flag.txt`, `/opt/flag.txt`, `/root/flag.txt`: Common flag locations.
+    *   `../../../../flag.txt` or similar near the web root.
+
+### Example Scenario: PHP `include` Vulnerability
+
+Imagine a simple PHP script:
+
+```php
+<?php
+    $file = $_GET['page'];
+    include($file . '.php');
+?>
+```
+
+And your URL is `http://example.com/index.php?page=home`. This would include `home.php`.
+
+To exploit this:
+
+```
+http://example.com/index.php?page=../../../../etc/passwd%00
+```
+
+Here, the `%00` is crucial to nullify the `.php` extension that the `include` function would otherwise append. Without it, the server would try to include `/etc/passwd.php`, which likely doesn't exist.
+
+## The CTF Mindset: Persistence and Observation
+
+Path traversal challenges in CTFs rarely involve just a single, straightforward `../` payload. They often layer defenses, requiring you to think about encoding, null bytes, directory structures, and the specific behavior of the server-side language. Pay close attention to error messages; they often provide clues about what's being filtered or where the file system lookup is failing. Tools like Burp Suite or OWASP ZAP are invaluable for quickly testing different payloads and observing server responses.
+
+---
+

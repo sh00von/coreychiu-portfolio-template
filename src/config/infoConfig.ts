@@ -7,18 +7,18 @@ export * from './activity'
 
 
 // personal info
-export const name = 'Corey Chiu'
-export const headline = 'Software engineer, Full-Stack web developer, and indie hacker.'
-export const introduction = 'I’m Corey, a software engineer based in Shenzhen, China. I like coding, and building interesting things'
-export const email = 'xxx@gmail.com'
-export const githubUsername = 'iamcorey'
+export const name = 'Minaruzzaman Shovon'
+export const headline = 'Water Resources Engineering Student, AI & Web Developer, Cybersecurity Enthusiast.'
+export const introduction = 'I’m Minaruzzaman Shovon, a Water Resources Engineering student at CUET, passionate about AI, geospatial analysis, and full-stack development.'
+export const email = 'minar.svn@gmail.com'
+export const githubUsername = 'minarsvn'
 
 // about page
-export const aboutMeHeadline = "I'm Corey Chiu, a software engineer based in Shenzhen, China."
+export const aboutMeHeadline = "I'm Minaruzzaman Shovon, a Water Resources Engineering student at CUET."
 export const aboutParagraphs = [
-  "I love coding. I learned programming when I in college. I wrote my first program in Java when I was 18.",
-  "I have a lot of hobbies, such as travelling, photography, watching movies, music and so on.",
-  "I'm working as a software develop engineer in Shenzhen, China now. And I'm building a lot of side projects in my spare time."
+  "I am passionate about climate change, geospatial analysis, and AI. I have experience in machine learning, web development, and cybersecurity.",
+  "I lead the CUET Cyber Security Club and have founded non-profit initiatives for student development.",
+  "My work spans research, real-time environmental monitoring, and building AI-powered tools for social good."
 ]
 
 
@@ -38,45 +38,15 @@ export type SocialLinkType = {
 
 export const socialLinks: Array<SocialLinkType> = [
   {
-    name: 'X',
-    icon: 'x',
-    href: 'https://x.com/realcoreychiu',
-    external: true
-  },
-  {
-    name: 'Bsky',
-    icon: 'bsky',
-    href: 'https://bsky.app/profile/coreychiu.com',
-    external: true
-  },
-  {
-    name: 'Jike',
-    icon: 'pill',
-    href: 'https://okjk.co/P7c1zU',
-    external: true
-  },
-  {
     name: 'Github',
     icon: 'github',
-    href: 'https://github.com/iamcorey',
-    external: true
-  },
-  {
-    name: 'Wechat',
-    icon: 'wechat',
-    href: 'https://mp.weixin.qq.com/s/DxnRgqNfgzXIhqj6w_x0dQ',
+    href: 'https://github.com/sh00von',
     external: true
   },
   {
     name: 'Discord',
     icon: 'discord',
-    href: 'https://discord.gg/xTxRg3Ej',
-    external: true
-  },
-  {
-    name: 'Ko-fi',
-    icon: 'coffee',
-    href: 'https://ko-fi.com/coreychiu',
+    href: 'https://discord.gg',
     external: true
   }
 ]
