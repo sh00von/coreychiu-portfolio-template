@@ -85,7 +85,13 @@ export const researchPapers: Array<ResearchPaperType> = [
   {
     title: 'Rolling Window-Based Anomaly Detection in the Halda River Using Isolation Forest and Explainable AI (XAI)',
     authors: 'Minaruzzaman Shovon et al.',
-    description: 'Work in progress on anomaly detection in river systems using machine learning and XAI.',
+    description: 'Anomaly detection in the Halda River using Isolation Forest and explainable AI techniques.',
+    status: 'In Progress'
+  },
+  {
+    title: 'Bengali Text-to-Chart Generation Using BERT-Based Natural Language Processing and Structured Visualization Mapping',
+    authors: 'Minaruzzaman Shovon et al.',
+    description: 'Generating charts from Bengali text using BERT-based NLP and visualization mapping.',
     status: 'In Progress'
   },
   {
@@ -118,5 +124,5 @@ export const researchPapers: Array<ResearchPaperType> = [
     description: 'Rainfall time series analysis and prediction using ML.',
     status: 'In Progress'
   }
-  ]
+]
   
